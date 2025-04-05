@@ -1,35 +1,48 @@
 import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 
-const app = new Hono();
+interface Env {
+  QUOTES_KV: KVNamespace;
+}
 
-// Array of jokes
-const jokes = [
-  { id: 1, joke: 'Why don’t skeletons fight each other? They don’t have the guts.' },
-  { id: 2, joke: 'What do you call cheese that isn’t yours? Nacho cheese.' },
-  { id: 3, joke: 'Why couldn’t the bicycle stand up by itself? It was two tired.' },
-  { id: 4, joke: 'What did the grape do when he got stepped on? Nothing but let out a little wine.' },
-  { id: 5, joke: 'Why don’t scientists trust atoms? Because they make up everything!' }
-];
+const app = new Hono<{ Bindings: Env }>();
 
-// Get all jokes
-app.get('/jokes', (c) => {
-  return c.json(jokes);
+// Enable CORS
+app.use('*', cors());
+
+// GET /quotes - Fetch a random quote
+app.get('/quotes', async (c) => {
+  try {
+    const keys = await c.env.QUOTES_KV.list();
+    if (keys.keys.length === 0) {
+      return c.json({ message: 'No quotes available.' }, 404);
+    }
+
+    const randomKey = keys.keys[Math.floor(Math.random() * keys.keys.length)].name;
+    const quote = await c.env.QUOTES_KV.get(randomKey);
+
+    return c.json({ quote });
+  } catch (error) {
+    console.error('Error fetching quote:', error);
+    return c.json({ error: 'Failed to fetch quote.' }, 500);
+  }
 });
 
-// Get a random joke
-app.get('/jokes/random', (c) => {
-  const randomJoke = jokes[Math.floor(Math.random() * jokes.length)];
-  return c.json(randomJoke);
-});
+// POST /quotes - Add a new quote
+app.post('/quotes', async (c) => {
+  try {
+    const body = await c.req.json<{ quote: string }>();
+    if (!body.quote) {
+      return c.json({ error: 'Quote is required.' }, 400);
+    }
 
-// Get a joke by ID
-app.get('/jokes/:id', (c) => {
-  const id = parseInt(c.req.param('id'));
-  const joke = jokes.find((j) => j.id === id);
-  if (joke) {
-    return c.json(joke);
-  } else {
-    return c.json({ error: 'Joke not found' }, 404);
+    const id = crypto.randomUUID();
+    await c.env.QUOTES_KV.put(id, body.quote);
+
+    return c.json({ message: 'Quote added successfully.', id });
+  } catch (error) {
+    console.error('Error adding quote:', error);
+    return c.json({ error: 'Failed to add quote.' }, 500);
   }
 });
 

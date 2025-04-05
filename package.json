@@ -1,16 +1,12 @@
 {
   "name": "wai-2",
   "version": "1.0.0",
-  "description": "A simple jokes API built with Hono on Cloudflare Workers.",
   "main": "src/index.ts",
-  "scripts": {
-    "start": "wrangler dev",
-    "deploy": "wrangler deploy --dispatch-namespace testing"
-  },
   "dependencies": {
     "hono": "^4"
   },
-  "devDependencies": {
-    "wrangler": "^4"
+  "scripts": {
+    "start": "wrangler dev",
+    "deploy": "wrangler deploy --dispatch-namespace testing"
   }
 }
