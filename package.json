@@ -1,5 +1,5 @@
 {
-  "name": "websyte-ai-files-agent",
+  "name": "wai-2",
   "version": "1.0.0",
   "description": "A simple jokes API built with Hono on Cloudflare Workers.",
   "main": "src/index.ts",
