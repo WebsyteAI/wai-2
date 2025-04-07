@@ -6,10 +6,10 @@ const app = new Hono();
 // Enable CORS
 app.use('*', cors());
 
-// GET /quotes - Fetch a random quote
-app.get('/quotes', async (c) => {
+// GET /test - Test endpoint
+app.get('/test', async (c) => {
   return c.json({
-    message: 'This is a placeholder. KV bindings have been removed.'
+    message: 'This is a test endpoint to validate the workflow.'
   });
 });
 
