@@ -3,6 +3,13 @@
   "main": "src/index.ts",
   "compatibility_date": "2025-03-07",
   "compatibility_flags": ["nodejs_compat"],
+  "kv_namespaces": [
+    {
+      "binding": "DATA_KV",
+      "id": "<YOUR_KV_NAMESPACE_ID>",
+      "preview_id": "<YOUR_KV_NAMESPACE_PREVIEW_ID>"
+    }
+  ],
   "observability": {
     "enabled": true
   }
